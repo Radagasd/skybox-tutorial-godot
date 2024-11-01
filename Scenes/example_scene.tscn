@@ -1,0 +1,38 @@
+[gd_scene load_steps=7 format=3 uid="uid://cx14n0n3cr26k"]
+
+[ext_resource type="Shader" path="res://Shaders/Skybox.gdshader" id="1_0ftdo"]
+[ext_resource type="Script" path="res://Scripts/SkyboxController.gd" id="2_iyrlj"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qml1g"]
+shader = ExtResource("1_0ftdo")
+shader_parameter/_SunDir = Vector3(0.818901, 0.492424, -0.294822)
+shader_parameter/_MoonDir = Vector3(0.918118, 0.144356, 0.369081)
+
+[sub_resource type="Sky" id="Sky_jsxv2"]
+sky_material = SubResource("ShaderMaterial_qml1g")
+
+[sub_resource type="Environment" id="Environment_tb6nb"]
+background_mode = 2
+sky = SubResource("Sky_jsxv2")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_wir04"]
+size = Vector2(100, 100)
+
+[node name="Root" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_tb6nb")
+script = ExtResource("2_iyrlj")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.355488, -0.450588, 0.818901, 0.0318931, 0.869771, 0.492424, -0.934137, 0.201168, -0.294823, 0, 0, 0)
+
+[node name="Moon" type="Node3D" parent="."]
+transform = Transform3D(0.381422, -0.107594, 0.918118, -0.0690258, 0.987115, 0.144356, -0.92182, -0.118435, 0.369081, 0, 0, 0)
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_wir04")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 2, 0)
+fov = 90.0
