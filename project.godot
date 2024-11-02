@@ -26,3 +26,7 @@ window/size/borderless=true
 [dotnet]
 
 project/assembly_name="skybox-tutorial"
+
+[rendering]
+
+anti_aliasing/quality/use_debanding=true
