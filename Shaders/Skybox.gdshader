@@ -22,13 +22,13 @@ uniform float _MoonExposure : hint_range(-16, 16) = 0;
 uniform sampler2D _MoonPanorama : source_color;
 uniform mat3 _MoonSpaceMatrix;
 
-float GetSunMask(float sunViewDot, float sunRadius)
+float getSunMask(float sunViewDot, float sunRadius)
 {
 	float stepRadius = 1.0 - sunRadius * sunRadius;
 	return step(stepRadius, sunViewDot);
 }
 
-// From Inigo Quilez, https://www.iquilezles.org/www/articles/intersectors/intersectors.htm
+// From Inigo Quilez, https://iquilezles.org/articles/intersectors/
 float sphIntersect(vec3 rayDir, vec3 spherePos, float radius)
 {
     vec3 oc = -spherePos;
@@ -56,7 +56,7 @@ mat3 rotation3d(vec3 axis, float angle) {
 
 // Based Ben Golus article on sphere imposter: https://bgolus.medium.com/rendering-a-sphere-on-a-quad-13c92025570c#6622
 // And another for dealing with the mip-map seam https://bgolus.medium.com/distinctive-derivative-differences-cce38d36797b#24b8
-vec2 CartesianToEquirectangularCoords(vec3 dir)
+vec2 cartesianToEquirectangularCoords(vec3 dir)
 {
 	vec2 uv = vec2(atan(dir.z, dir.x), acos(-dir.y));
 	uv /= vec2(PI * 2.0, PI);
@@ -66,7 +66,7 @@ vec2 CartesianToEquirectangularCoords(vec3 dir)
 	return uv;
 }
 
-vec3 GetMoonTexture(vec3 dir)
+vec3 getMoonTexture(vec3 dir)
 {
 	dir = _MoonSpaceMatrix * dir;
 	// Found through trial and error resulting in rotation3d(vec3(1.0, 0.0, 0.0), -0.5 * PI) * rotation3d(vec3(0.0, 1.0, 0.0), 0.35*PI) * rotation3d(vec3(0.0, 0.0, 1.0), 0.68 * PI);
@@ -75,7 +75,7 @@ vec3 GetMoonTexture(vec3 dir)
 		vec3(0.3833168, -0.7523017, -0.5358268),
 		vec3(-0.8910065, -0.4539905,  0.0)));
 	dir = correctionMatrix * dir;
-	vec2 uv = CartesianToEquirectangularCoords(dir);
+	vec2 uv = cartesianToEquirectangularCoords(dir);
     return texture(_MoonPanorama, uv).rgb;
 }
 
@@ -101,7 +101,7 @@ void sky() {
 	vec3 skyColor = sunZenithColor + vzMask * viewZenithColor + svMask * sunViewColor;
 	
 	// The sun
-	float sunMask = GetSunMask(sunViewDot, _SunRadius);
+	float sunMask = getSunMask(sunViewDot, _SunRadius);
 	vec3 sunColor = _SunColor * sunMask;
 	
 	// The moon
@@ -109,7 +109,7 @@ void sky() {
 	float moonMask = moonIntersect > -1.0 ? 1.0 : 0.0;
 	vec3 moonNormal = normalize(viewDir * moonIntersect - _MoonDir);
 	float moonNdotL = clamp(dot(moonNormal, _SunDir), 0.0, 1.0);
-	vec3 moonTexture = GetMoonTexture(moonNormal);
+	vec3 moonTexture = getMoonTexture(moonNormal);
 	vec3 moonColor = moonMask * moonNdotL * exp2(_MoonExposure) * moonTexture;
 
 	vec3 col = skyColor + sunColor + moonColor;
