@@ -40,11 +40,25 @@ float sphIntersect(vec3 rayDir, vec3 spherePos, float radius)
     return -b - h;
 }
 
-// Based on Godot's calculation of SKY_COORDS (aka panorama_coords) https://github.com/godotengine/godot/blob/1bffd6c73b44b85e5889f54e14b2193940cf5bb1/drivers/gles3/shaders/sky.glsl#L176
-// And Ben Golus's article for dealing with the mip-map seam https://bgolus.medium.com/distinctive-derivative-differences-cce38d36797b#24b8
-vec2 NormalToEquirectangularCoords(vec3 normal)
+// Construct a rotation matrix that rotates around a particular axis by angle
+// Adapted from: https://github.com/dmnsgn/glsl-rotate
+mat3 rotation3d(vec3 axis, float angle) {
+  axis = normalize(axis);
+  float s = sin(angle);
+  float c = cos(angle);
+  float oc = 1.0 - c;
+
+  return mat3(
+    vec3(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s),
+    vec3(oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s),
+    vec3(oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c));
+}
+
+// Based Ben Golus article on sphere imposter: https://bgolus.medium.com/rendering-a-sphere-on-a-quad-13c92025570c#6622
+// And another for dealing with the mip-map seam https://bgolus.medium.com/distinctive-derivative-differences-cce38d36797b#24b8
+vec2 CartesianToEquirectangularCoords(vec3 dir)
 {
-	vec2 uv = vec2(atan(normal.z, normal.x), acos(normal.y));
+	vec2 uv = vec2(atan(dir.z, dir.x), acos(-dir.y));
 	uv /= vec2(PI * 2.0, PI);
 	
 	float x_fract = fract(uv.x);
@@ -52,12 +66,16 @@ vec2 NormalToEquirectangularCoords(vec3 normal)
 	return uv;
 }
 
-vec3 GetMoonTexture(vec3 normal)
+vec3 GetMoonTexture(vec3 dir)
 {
-	normal = normal * _MoonSpaceMatrix;
-	mat3 correctionMatrix = mat3( vec3(0.0, -0.24869, 0.968583), vec3(0.0, 0.968583, 0.24869), vec3(-1.0, 0.0, 0.0));
-	normal = normal * correctionMatrix;
-	vec2 uv = NormalToEquirectangularCoords(normal);
+	dir = _MoonSpaceMatrix * dir;
+	// Found through trial and error resulting in rotation3d(vec3(1.0, 0.0, 0.0), -0.5 * PI) * rotation3d(vec3(0.0, 1.0, 0.0), 0.35*PI) * rotation3d(vec3(0.0, 0.0, 1.0), 0.68 * PI);
+	mat3 correctionMatrix = (mat3(
+		vec3(-0.2432603,  0.4774252, -0.8443279),
+		vec3(0.3833168, -0.7523017, -0.5358268),
+		vec3(-0.8910065, -0.4539905,  0.0)));
+	dir = correctionMatrix * dir;
+	vec2 uv = CartesianToEquirectangularCoords(dir);
     return texture(_MoonPanorama, uv).rgb;
 }
 
