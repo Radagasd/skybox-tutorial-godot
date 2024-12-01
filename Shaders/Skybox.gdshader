@@ -19,8 +19,11 @@ uniform vec3 _SunColor : source_color = vec3(1.0, 1.0, 1.0);
 group_uniforms Moon;
 uniform float _MoonRadius : hint_range(0, 1) = 0.05;
 uniform float _MoonExposure : hint_range(-16, 16) = 0;
-uniform sampler2D _MoonPanorama : source_color;
+uniform sampler2D _MoonEquirectangular : source_color;
 uniform mat3 _MoonWorldToObject;
+
+group_uniforms Stars;
+uniform sampler2D _StarEquirectangular : source_color;
 
 float getSunMask(float sunViewDot, float sunRadius)
 {
@@ -71,7 +74,7 @@ vec3 getMoonTexture(vec3 dir)
 {
 	dir = _MoonWorldToObject * dir;
 	vec2 uv = cartesianToEquirectangularCoords(dir);
-    return texture(_MoonPanorama, uv).rgb;
+    return texture(_MoonEquirectangular, uv).rgb;
 }
 
 void sky() {
