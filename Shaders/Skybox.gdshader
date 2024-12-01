@@ -24,6 +24,8 @@ uniform mat3 _MoonWorldToObject;
 
 group_uniforms Stars;
 uniform samplerCube _StarCubemap : source_color;
+uniform float _StarExposure : hint_range(-16, 16) = 0;
+uniform float _StarPower : hint_range(1, 5) = 1;
 
 float getSunMask(float sunViewDot, float sunRadius)
 {
@@ -101,7 +103,10 @@ void sky() {
 	vec3 moonColor = moonMask * moonNdotL * exp2(_MoonExposure) * moonTexture;
 	
 	// The stars
-	vec3 starColor = texture(_StarCubemap, viewDir, -1.0).rgb;
+	vec3 starColor = texture(_StarCubemap, viewDir).rgb;
+	starColor = pow(starColor, vec3(_StarPower));
+	float starStrength = (1.0 - sunViewDot01) * (clamp(-sunZenithDot, 0.0, 1.0));
+	starColor *= (1.0 - sunMask) * (1.0 - moonMask) * exp2(_StarExposure) * starStrength;
 
 	vec3 col = skyColor + sunColor + moonColor + starColor;
 	
