@@ -26,6 +26,8 @@ group_uniforms Stars;
 uniform samplerCube _StarCubemap : source_color;
 uniform float _StarExposure : hint_range(-16, 16) = 0;
 uniform float _StarPower : hint_range(1, 5) = 1;
+uniform float _StarLatitude : hint_range(-90, 90) = 0;
+uniform float _StarSpeed = 0.001;
 
 float getSunMask(float sunViewDot, float sunRadius)
 {
@@ -45,6 +47,16 @@ float sphIntersect(vec3 rayDir, vec3 spherePos, float radius)
     return -b - h;
 }
 
+vec3 getMoonTexture(vec3 dir)
+{
+	dir = _MoonWorldToObject * dir;
+	// Rotate 180 degrees by flipping both x and z.
+	dir.x = -dir.x;
+	dir.z = -dir.z;
+	
+	return texture(_MoonCubemap, dir).rgb;
+}
+
 // Construct a rotation matrix that rotates around a particular axis by angle
 // Adapted from: https://github.com/dmnsgn/glsl-rotate
 mat3 rotation3d(vec3 axis, float angle) {
@@ -59,14 +71,19 @@ mat3 rotation3d(vec3 axis, float angle) {
     vec3(oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c));
 }
 
-vec3 getMoonTexture(vec3 dir)
+// Rotate the view direction, tilt with latitude, spin with time
+vec3 GetStarUVW(vec3 viewDir, float latitude, float localSiderealTime)
 {
-	dir = _MoonWorldToObject * dir;
-	// Rotate 180 degrees by flipping both x and z.
-	dir.x = -dir.x;
-	dir.z = -dir.z;
-	
-	return texture(_MoonCubemap, dir).rgb;
+    // tilt = 0 at the north pole, where latitude = 90 degrees
+    float tilt = PI * (latitude - 90.0) / 180.0;
+    mat3 tiltRotation = rotation3d(vec3(-1.0,0.0,0.0), tilt);
+
+    // 0.75 is a texture offset for lST = 0 equals noon
+    float spin = (0.75-localSiderealTime) * 2.0 * PI;
+    mat3 spinRotation = rotation3d(vec3(0.0, 1.0, 0.0), spin);
+    
+    // The order of rotation is important
+    return spinRotation * tiltRotation * viewDir;
 }
 
 void sky() {
@@ -103,7 +120,8 @@ void sky() {
 	vec3 moonColor = moonMask * moonNdotL * exp2(_MoonExposure) * moonTexture;
 	
 	// The stars
-	vec3 starColor = texture(_StarCubemap, viewDir).rgb;
+	vec3 starUVW = GetStarUVW(viewDir, _StarLatitude, mod(TIME *  _StarSpeed, 1.0));
+	vec3 starColor = texture(_StarCubemap, starUVW).rgb;
 	starColor = pow(starColor, vec3(_StarPower));
 	float starStrength = (1.0 - sunViewDot01) * (clamp(-sunZenithDot, 0.0, 1.0));
 	starColor *= (1.0 - sunMask) * (1.0 - moonMask) * exp2(_StarExposure) * starStrength;
