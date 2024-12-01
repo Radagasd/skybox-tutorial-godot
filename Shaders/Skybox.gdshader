@@ -20,7 +20,7 @@ group_uniforms Moon;
 uniform float _MoonRadius : hint_range(0, 1) = 0.05;
 uniform float _MoonExposure : hint_range(-16, 16) = 0;
 uniform sampler2D _MoonPanorama : source_color;
-uniform mat3 _MoonSpaceMatrix;
+uniform mat3 _MoonWorldToObject;
 
 float getSunMask(float sunViewDot, float sunRadius)
 {
@@ -56,9 +56,10 @@ mat3 rotation3d(vec3 axis, float angle) {
 
 // Based Ben Golus article on sphere imposter: https://bgolus.medium.com/rendering-a-sphere-on-a-quad-13c92025570c#6622
 // And another for dealing with the mip-map seam https://bgolus.medium.com/distinctive-derivative-differences-cce38d36797b#24b8
+// Adapted to right-handedness for Godot
 vec2 cartesianToEquirectangularCoords(vec3 dir)
 {
-	vec2 uv = vec2(atan(dir.z, dir.x), acos(-dir.y));
+	vec2 uv = vec2(atan(dir.x, dir.z), acos(dir.y));
 	uv /= vec2(PI * 2.0, PI);
 	
 	float x_fract = fract(uv.x);
@@ -68,13 +69,7 @@ vec2 cartesianToEquirectangularCoords(vec3 dir)
 
 vec3 getMoonTexture(vec3 dir)
 {
-	dir = _MoonSpaceMatrix * dir;
-	// Found through trial and error resulting in rotation3d(vec3(1.0, 0.0, 0.0), -0.5 * PI) * rotation3d(vec3(0.0, 1.0, 0.0), 0.35*PI) * rotation3d(vec3(0.0, 0.0, 1.0), 0.68 * PI);
-	mat3 correctionMatrix = (mat3(
-		vec3(-0.2432603,  0.4774252, -0.8443279),
-		vec3(0.3833168, -0.7523017, -0.5358268),
-		vec3(-0.8910065, -0.4539905,  0.0)));
-	dir = correctionMatrix * dir;
+	dir = _MoonWorldToObject * dir;
 	vec2 uv = cartesianToEquirectangularCoords(dir);
     return texture(_MoonPanorama, uv).rgb;
 }
