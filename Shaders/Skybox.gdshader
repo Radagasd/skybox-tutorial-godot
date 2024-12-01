@@ -19,11 +19,11 @@ uniform vec3 _SunColor : source_color = vec3(1.0, 1.0, 1.0);
 group_uniforms Moon;
 uniform float _MoonRadius : hint_range(0, 1) = 0.05;
 uniform float _MoonExposure : hint_range(-16, 16) = 0;
-uniform sampler2D _MoonEquirectangular : source_color;
+uniform samplerCube _MoonCubemap : source_color;
 uniform mat3 _MoonWorldToObject;
 
 group_uniforms Stars;
-uniform sampler2D _StarEquirectangular : source_color;
+uniform samplerCube _StarCubemap : source_color;
 
 float getSunMask(float sunViewDot, float sunRadius)
 {
@@ -57,24 +57,14 @@ mat3 rotation3d(vec3 axis, float angle) {
     vec3(oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c));
 }
 
-// Based Ben Golus article on sphere imposter: https://bgolus.medium.com/rendering-a-sphere-on-a-quad-13c92025570c#6622
-// And another for dealing with the mip-map seam https://bgolus.medium.com/distinctive-derivative-differences-cce38d36797b#24b8
-// Adapted to right-handedness for Godot
-vec2 cartesianToEquirectangularCoords(vec3 dir)
-{
-	vec2 uv = vec2(atan(dir.x, dir.z), acos(dir.y));
-	uv /= vec2(PI * 2.0, PI);
-	
-	float x_fract = fract(uv.x);
-	uv.x = fwidthCoarse(uv.x) - 0.0001 < fwidthCoarse(x_fract) ? uv.x : x_fract;
-	return uv;
-}
-
 vec3 getMoonTexture(vec3 dir)
 {
 	dir = _MoonWorldToObject * dir;
-	vec2 uv = cartesianToEquirectangularCoords(dir);
-    return texture(_MoonEquirectangular, uv).rgb;
+	// Rotate 180 degrees by flipping both x and z.
+	dir.x = -dir.x;
+	dir.z = -dir.z;
+	
+	return texture(_MoonCubemap, dir).rgb;
 }
 
 void sky() {
@@ -109,8 +99,11 @@ void sky() {
 	float moonNdotL = clamp(dot(moonNormal, _SunDir), 0.0, 1.0);
 	vec3 moonTexture = getMoonTexture(moonNormal);
 	vec3 moonColor = moonMask * moonNdotL * exp2(_MoonExposure) * moonTexture;
+	
+	// The stars
+	vec3 starColor = texture(_StarCubemap, viewDir, -1.0).rgb;
 
-	vec3 col = skyColor + sunColor + moonColor;
+	vec3 col = skyColor + sunColor + moonColor + starColor;
 	
 	COLOR = col;
 }

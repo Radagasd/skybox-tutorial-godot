@@ -1,0 +1,25 @@
+[remap]
+
+importer="cubemap_texture"
+type="CompressedCubemap"
+uid="uid://li7b2dyi7ml8"
+path="res://.godot/imported/MoonColorCubemap.jpg-c74a68f677783f26f74df0695b746116.ccube"
+metadata={
+"vram_texture": false
+}
+
+[deps]
+
+source_file="res://Textures/MoonColorCubemap.jpg"
+dest_files=["res://.godot/imported/MoonColorCubemap.jpg-c74a68f677783f26f74df0695b746116.ccube"]
+
+[params]
+
+compress/mode=0
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/hdr_compression=1
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+slices/arrangement=3
