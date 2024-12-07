@@ -31,14 +31,14 @@ uniform float _StarSpeed = 0.001;
 uniform samplerCube _StarConstellationCubemap : source_color;
 uniform vec3 _StarConstellationColor : source_color = vec3(0.0, 0.3, 0.6);
 
-float getSunMask(float sunViewDot, float sunRadius)
+float get_sun_mask(float sunViewDot, float sunRadius)
 {
 	float stepRadius = 1.0 - sunRadius * sunRadius;
 	return step(stepRadius, sunViewDot);
 }
 
 // From Inigo Quilez, https://iquilezles.org/articles/intersectors/
-float sphIntersect(vec3 rayDir, vec3 spherePos, float radius)
+float sphere_intersect(vec3 rayDir, vec3 spherePos, float radius)
 {
     vec3 oc = -spherePos;
     float b = dot(oc, rayDir);
@@ -49,7 +49,7 @@ float sphIntersect(vec3 rayDir, vec3 spherePos, float radius)
     return -b - h;
 }
 
-vec3 getMoonTexture(vec3 dir)
+vec3 get_moon_texture(vec3 dir)
 {
 	dir = _MoonWorldToObject * dir;
 	// Rotate 180 degrees by flipping both x and z.
@@ -74,7 +74,7 @@ mat3 rotation3d(vec3 axis, float angle) {
 }
 
 // Rotate the view direction, tilt with latitude, spin with time
-vec3 GetStarUVW(vec3 viewDir, float latitude, float localSiderealTime)
+vec3 get_star_uvw(vec3 viewDir, float latitude, float localSiderealTime)
 {
     // tilt = 0 at the north pole, where latitude = 90 degrees
     float tilt = PI * (latitude - 90.0) / 180.0;
@@ -110,19 +110,19 @@ void sky() {
 	vec3 skyColor = sunZenithColor + vzMask * viewZenithColor + svMask * sunViewColor;
 	
 	// The sun
-	float sunMask = getSunMask(sunViewDot, _SunRadius);
+	float sunMask = get_sun_mask(sunViewDot, _SunRadius);
 	vec3 sunColor = _SunColor * sunMask;
 	
 	// The moon
-	float moonIntersect = sphIntersect(viewDir, _MoonDir, _MoonRadius);
+	float moonIntersect = sphere_intersect(viewDir, _MoonDir, _MoonRadius);
 	float moonMask = moonIntersect > -1.0 ? 1.0 : 0.0;
 	vec3 moonNormal = normalize(viewDir * moonIntersect - _MoonDir);
 	float moonNdotL = clamp(dot(moonNormal, _SunDir), 0.0, 1.0);
-	vec3 moonTexture = getMoonTexture(moonNormal);
+	vec3 moonTexture = get_moon_texture(moonNormal);
 	vec3 moonColor = moonMask * moonNdotL * exp2(_MoonExposure) * moonTexture;
 	
 	// The stars
-	vec3 starUVW = GetStarUVW(viewDir, _StarLatitude, mod(TIME *  _StarSpeed, 1.0));
+	vec3 starUVW = get_star_uvw(viewDir, _StarLatitude, mod(TIME *  _StarSpeed, 1.0));
 	vec3 starColor = texture(_StarCubemap, starUVW).rgb;
 	starColor = pow(starColor, vec3(_StarPower));
 	float starStrength = (1.0 - sunViewDot01) * (clamp(-sunZenithDot, 0.0, 1.0));
