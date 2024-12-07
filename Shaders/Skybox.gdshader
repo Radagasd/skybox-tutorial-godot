@@ -138,6 +138,11 @@ void sky() {
 	skyColor *= mix(1.0, 0.4, solarEclipse01);
 	sunColor *= (1.0 - moonMask) * mix(1.0, 16.0, solarEclipse01);
 	
+	// Lunar eclipse
+	float lunarEclipseMask = 1.0 - step(1.0 - _SunRadius * _SunRadius, -sunViewDot);
+	float lunarEclipse01 = smoothstep(1.0 - _SunRadius * _SunRadius * 0.05, 1.0, -sunMoonDot);
+	moonColor *= mix(vec3(lunarEclipseMask), vec3(0.3,0.05,0), lunarEclipse01);
+	
 	vec3 col = skyColor + sunColor + moonColor + starColor + constColor;
 	
 	COLOR = col;
