@@ -11,24 +11,24 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qml1g"]
 shader = ExtResource("1_0ftdo")
-shader_parameter/_SunDir = Vector3(0.409576, -0.573576, 0.709407)
-shader_parameter/_MoonDir = Vector3(-0.409576, 0.573576, 0.709406)
-shader_parameter/_SunRadius = 0.05
-shader_parameter/_SunColor = Color(1, 1, 1, 1)
-shader_parameter/_MoonRadius = 0.067
-shader_parameter/_MoonExposure = 1.0
-shader_parameter/_MoonWorldToObject = Basis(0.866025, 1.49012e-08, 0.5, 0.286788, 0.819153, -0.496732, -0.409576, 0.573576, 0.709407)
-shader_parameter/_MoonCubemap = ExtResource("2_eoe28")
-shader_parameter/_StarExposure = 6.0
-shader_parameter/_StarPower = 1.6
-shader_parameter/_StarLatitude = 52.0
-shader_parameter/_StarSpeed = 0.01
-shader_parameter/_StarConstellationColor = Color(0, 0.3, 0.6, 1)
-shader_parameter/_StarCubemap = ExtResource("3_qx4rs")
-shader_parameter/_StarConstellationCubemap = ExtResource("3_f82el")
-shader_parameter/_SunZenithGrad = ExtResource("2_iqe37")
-shader_parameter/_ViewZenithGrad = ExtResource("3_taygh")
-shader_parameter/_SunViewGrad = ExtResource("2_njgvn")
+shader_parameter/sun_dir = Vector3(0.409576, -0.573576, 0.709407)
+shader_parameter/moon_dir = Vector3(-0.409576, 0.573576, 0.709406)
+shader_parameter/sun_radius = 0.05
+shader_parameter/sun_color = Color(1, 1, 1, 1)
+shader_parameter/moon_radius = 0.067
+shader_parameter/moon_exposure = 1.0
+shader_parameter/moon_world_to_object = Basis(0.866025, 1.49012e-08, 0.5, 0.286788, 0.819153, -0.496732, -0.409576, 0.573576, 0.709407)
+shader_parameter/moon_cubemap = ExtResource("2_eoe28")
+shader_parameter/star_exposure = 6.0
+shader_parameter/star_power = 1.6
+shader_parameter/star_latitude = 52.0
+shader_parameter/star_speed = 0.001
+shader_parameter/star_constellation_color = Color(0, 0.3, 0.6, 1)
+shader_parameter/star_cubemap = ExtResource("3_qx4rs")
+shader_parameter/star_constellation_cubemap = ExtResource("3_f82el")
+shader_parameter/sun_zenith_gradient = ExtResource("2_iqe37")
+shader_parameter/view_zenith_gradient = ExtResource("3_taygh")
+shader_parameter/sun_view_gradient = ExtResource("2_njgvn")
 
 [sub_resource type="Sky" id="Sky_jsxv2"]
 sky_material = SubResource("ShaderMaterial_qml1g")
