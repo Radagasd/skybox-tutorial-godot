@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://cx14n0n3cr26k"]
+[gd_scene load_steps=16 format=3 uid="uid://cx14n0n3cr26k"]
 
 [ext_resource type="Shader" path="res://Shaders/Skybox.gdshader" id="1_0ftdo"]
 [ext_resource type="CompressedCubemap" uid="uid://li7b2dyi7ml8" path="res://Textures/MoonColorCubemap.jpg" id="2_eoe28"]
@@ -11,16 +11,16 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qml1g"]
 shader = ExtResource("1_0ftdo")
-shader_parameter/_SunDir = Vector3(0.224144, -0.5, -0.836516)
-shader_parameter/_MoonDir = Vector3(-0.224144, 0.5, 0.836516)
+shader_parameter/_SunDir = Vector3(0.409576, -0.573576, 0.709407)
+shader_parameter/_MoonDir = Vector3(-0.409576, 0.573576, 0.709406)
 shader_parameter/_SunRadius = 0.05
 shader_parameter/_SunColor = Color(1, 1, 1, 1)
 shader_parameter/_MoonRadius = 0.067
 shader_parameter/_MoonExposure = 1.0
-shader_parameter/_MoonWorldToObject = Basis(0.965926, 0, 0.258819, 0.12941, 0.866026, -0.482963, -0.224144, 0.5, 0.836516)
+shader_parameter/_MoonWorldToObject = Basis(0.866025, 1.49012e-08, 0.5, 0.286788, 0.819153, -0.496732, -0.409576, 0.573576, 0.709407)
 shader_parameter/_MoonCubemap = ExtResource("2_eoe28")
-shader_parameter/_StarExposure = 2.0
-shader_parameter/_StarPower = 1.3
+shader_parameter/_StarExposure = 6.0
+shader_parameter/_StarPower = 1.6
 shader_parameter/_StarLatitude = 52.0
 shader_parameter/_StarSpeed = 0.01
 shader_parameter/_StarConstellationColor = Color(0, 0.3, 0.6, 1)
@@ -48,6 +48,48 @@ glow_hdr_threshold = 1.3
 [sub_resource type="PlaneMesh" id="PlaneMesh_wir04"]
 size = Vector2(100, 100)
 
+[sub_resource type="Animation" id="Animation_brdnt"]
+resource_name = "preview_animation"
+length = 10.0
+step = 1.0
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sun")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, -0.290459, 0.24684, 0.0778284, 0.92122, 5, 1, 0.290459, 0.24684, -0.0778284, 0.92122, 10, 1, -0.290459, 0.24684, 0.0778284, 0.92122)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Moon")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.290459, -0.24684, 0.0778284, 0.92122, 5, 1, -0.290459, -0.24684, -0.0778284, 0.92122, 10, 1, 0.290459, -0.24684, 0.0778284, 0.92122)
+
+[sub_resource type="Animation" id="Animation_eu3w4"]
+length = 0.001
+tracks/0/type = "rotation_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sun")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, -0.290459, 0.24684, 0.0778284, 0.92122)
+tracks/1/type = "rotation_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Moon")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, -0.290459, -0.24684, -0.0778284, 0.92122)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ik8ry"]
+_data = {
+"RESET": SubResource("Animation_eu3w4"),
+"preview_animation": SubResource("Animation_brdnt")
+}
+
 [node name="Root" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -55,10 +97,10 @@ environment = SubResource("Environment_tb6nb")
 script = ExtResource("2_iyrlj")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.965926, 0.12941, 0.224144, 0, 0.866026, -0.499999, -0.258819, -0.482963, -0.836515, 0, 0, 0)
+transform = Transform3D(0.866026, -0.286788, 0.409575, 1.3411e-07, 0.819152, 0.573576, -0.5, -0.496732, 0.709406, 0, 0, 0)
 
 [node name="Moon" type="Node3D" parent="."]
-transform = Transform3D(0.965926, 0.129409, -0.224144, 0, 0.866025, 0.5, 0.258819, -0.482963, 0.836516, 0, 0, 0)
+transform = Transform3D(0.866026, 0.286788, -0.409576, 2.98023e-08, 0.819152, 0.573576, 0.5, -0.496731, 0.709406, 0, 0, 0)
 
 [node name="Ground" type="MeshInstance3D" parent="."]
 mesh = SubResource("PlaneMesh_wir04")
@@ -66,3 +108,9 @@ mesh = SubResource("PlaneMesh_wir04")
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(-1, 3.69465e-08, 7.9232e-08, 0, 0.906308, -0.422619, -8.74228e-08, -0.422619, -0.906308, 0, 2, 0)
 fov = 60.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_ik8ry")
+}
+autoplay = "preview_animation"
