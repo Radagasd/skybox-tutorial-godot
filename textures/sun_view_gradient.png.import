@@ -3,20 +3,19 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b55ja75xsj2ct"
-path.bptc="res://.godot/imported/sun_view_gradient.png-c5c61236e4ebbc477392dac6db6fc4ad.bptc.ctex"
+path="res://.godot/imported/sun_view_gradient.png-c5c61236e4ebbc477392dac6db6fc4ad.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
 source_file="res://textures/sun_view_gradient.png"
-dest_files=["res://.godot/imported/sun_view_gradient.png-c5c61236e4ebbc477392dac6db6fc4ad.bptc.ctex"]
+dest_files=["res://.godot/imported/sun_view_gradient.png-c5c61236e4ebbc477392dac6db6fc4ad.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=true
 compress/lossy_quality=0.7
 compress/hdr_compression=1
