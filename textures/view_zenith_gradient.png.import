@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://scgrifnhkfgt"
-path.bptc="res://.godot/imported/SunZenith_Gradient.png-02dc390e9d5502387d9f462b1da9a176.bptc.ctex"
+uid="uid://dfntksp0p6rga"
+path.bptc="res://.godot/imported/view_zenith_gradient.png-9f1884c9909ae5cfd271a92c50ba2350.bptc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://Textures/SunZenith_Gradient.png"
-dest_files=["res://.godot/imported/SunZenith_Gradient.png-02dc390e9d5502387d9f462b1da9a176.bptc.ctex"]
+source_file="res://textures/view_zenith_gradient.png"
+dest_files=["res://.godot/imported/view_zenith_gradient.png-9f1884c9909ae5cfd271a92c50ba2350.bptc.ctex"]
 
 [params]
 

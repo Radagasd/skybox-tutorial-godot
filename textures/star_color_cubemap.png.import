@@ -2,16 +2,16 @@
 
 importer="cubemap_texture"
 type="CompressedCubemap"
-uid="uid://li7b2dyi7ml8"
-path="res://.godot/imported/MoonColorCubemap.jpg-c74a68f677783f26f74df0695b746116.ccube"
+uid="uid://cw7krbv0cgxo4"
+path="res://.godot/imported/star_color_cubemap.png-1f4315d2deadb40266d36fc950462cd1.ccube"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Textures/MoonColorCubemap.jpg"
-dest_files=["res://.godot/imported/MoonColorCubemap.jpg-c74a68f677783f26f74df0695b746116.ccube"]
+source_file="res://textures/star_color_cubemap.png"
+dest_files=["res://.godot/imported/star_color_cubemap.png-1f4315d2deadb40266d36fc950462cd1.ccube"]
 
 [params]
 
