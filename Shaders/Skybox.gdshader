@@ -133,6 +133,11 @@ void sky() {
 	vec3 constColor = texture(_StarConstellationCubemap, starUVW).rgb;
 	constColor *= _StarConstellationColor * starMask * starStrength;
 	
+	// Solar eclipse
+	float solarEclipse01 = smoothstep(1.0 - _SunRadius * _SunRadius, 1.0, sunMoonDot);
+	skyColor *= mix(1.0, 0.4, solarEclipse01);
+	sunColor *= (1.0 - moonMask) * mix(1.0, 16.0, solarEclipse01);
+	
 	vec3 col = skyColor + sunColor + moonColor + starColor + constColor;
 	
 	COLOR = col;
