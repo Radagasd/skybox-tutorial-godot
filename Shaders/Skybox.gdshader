@@ -28,6 +28,8 @@ uniform float _StarExposure : hint_range(-16, 16) = 0;
 uniform float _StarPower : hint_range(1, 5) = 1;
 uniform float _StarLatitude : hint_range(-90, 90) = 0;
 uniform float _StarSpeed = 0.001;
+uniform samplerCube _StarConstellationCubemap : source_color;
+uniform vec3 _StarConstellationColor : source_color = vec3(0.0, 0.3, 0.6);
 
 float getSunMask(float sunViewDot, float sunRadius)
 {
@@ -124,9 +126,14 @@ void sky() {
 	vec3 starColor = texture(_StarCubemap, starUVW).rgb;
 	starColor = pow(starColor, vec3(_StarPower));
 	float starStrength = (1.0 - sunViewDot01) * (clamp(-sunZenithDot, 0.0, 1.0));
-	starColor *= (1.0 - sunMask) * (1.0 - moonMask) * exp2(_StarExposure) * starStrength;
-
-	vec3 col = skyColor + sunColor + moonColor + starColor;
+	float starMask = (1.0 - sunMask) * (1.0 - moonMask);
+	starColor *= starMask * exp2(_StarExposure) * starStrength;
+	
+	// The constellations
+	vec3 constColor = texture(_StarConstellationCubemap, starUVW).rgb;
+	constColor *= _StarConstellationColor * starMask * starStrength;
+	
+	vec3 col = skyColor + sunColor + moonColor + starColor + constColor;
 	
 	COLOR = col;
 }
